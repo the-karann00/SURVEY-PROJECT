@@ -1,1601 +1,575 @@
 /**
  * ==============================================================================
- * SIMPLE ONLINE SURVEY CREATOR - JAVASCRIPT (script.js)
- * Clean, Modular, Framework-Free Vanilla JavaScript
- * Suitable for BTech CSE College Project Demonstration
+ * SIMPLE ONLINE SURVEY CREATOR - SCRIPT.JS (Concise & Beginner-Friendly)
+ * Pure Vanilla JavaScript • Clean & Modular • Easy to Explain to Your Teacher
  * ==============================================================================
  */
 
-// Global Storage Keys
-const STORAGE_KEYS = {
-  SURVEYS: 'survey_app_surveys',
-  RESPONSES: 'survey_app_responses',
-  ADMIN_AUTH: 'survey_app_admin_auth',
-  SUBMISSIONS_PREFIX: 'survey_submitted_'
-};
-
-/**
- * Default Sample Surveys (Surveys A, B, and C as required)
- * Preloaded automatically on first visit or when clicking 'Reset Demo Data'.
- */
+// 1. DEFAULT DATA (Sample Surveys A, B, C & Responses)
 const DEFAULT_SURVEYS = [
   {
     id: "survey_a",
     title: "Student Feedback About Teaching",
-    description: "Please provide your honest feedback regarding teaching methods, classroom interactivity, and doubt resolution.",
+    description: "Feedback regarding teaching methods, interactivity, and doubts.",
     status: "Published",
     createdAt: "2026-11-01",
     questions: [
-      {
-        id: "q_a1",
-        text: "Which subject are you studying?",
-        type: "short_text",
-        required: true
-      },
-      {
-        id: "q_a2",
-        text: "How clearly does the teacher explain the topics?",
-        type: "rating",
-        required: true
-      },
-      {
-        id: "q_a3",
-        text: "Does the teacher provide practical examples?",
-        type: "yes_no",
-        required: true
-      },
-      {
-        id: "q_a4",
-        text: "How interactive are the classes?",
-        type: "multiple_choice",
-        options: ["Very interactive", "Interactive", "Average", "Not interactive"],
-        required: true
-      },
-      {
-        id: "q_a5",
-        text: "Are your doubts resolved during class?",
-        type: "yes_no",
-        required: true
-      },
-      {
-        id: "q_a6",
-        text: "Which teaching method do you prefer?",
-        type: "multiple_choice",
-        options: ["Blackboard", "PPT presentation", "Live coding/demonstration", "Group activities"],
-        required: true
-      },
-      {
-        id: "q_a7",
-        text: "What improvements would you suggest for the class?",
-        type: "long_text",
-        required: false
-      }
+      { id: "q1", text: "Which subject are you studying?", type: "short_text", required: true },
+      { id: "q2", text: "How clearly does the teacher explain the topics?", type: "rating", required: true },
+      { id: "q3", text: "Does the teacher provide practical examples?", type: "yes_no", required: true },
+      { id: "q4", text: "How interactive are the classes?", type: "multiple_choice", options: ["Very interactive", "Interactive", "Average", "Not interactive"], required: true },
+      { id: "q5", text: "Are your doubts resolved during class?", type: "yes_no", required: true },
+      { id: "q6", text: "Which teaching method do you prefer?", type: "multiple_choice", options: ["Blackboard", "PPT presentation", "Live coding/demonstration", "Group activities"], required: true },
+      { id: "q7", text: "What improvements would you suggest?", type: "long_text", required: false }
     ]
   },
   {
     id: "survey_b",
     title: "College Campus Feedback",
-    description: "Help the administration improve campus amenities, library resources, and digital infrastructure.",
+    description: "Help improve amenities, library, and internet connectivity.",
     status: "Published",
     createdAt: "2026-11-02",
     questions: [
-      {
-        id: "q_b1",
-        text: "How satisfied are you with college facilities?",
-        type: "rating",
-        required: true
-      },
-      {
-        id: "q_b2",
-        text: "How would you rate classroom cleanliness?",
-        type: "multiple_choice",
-        options: ["Excellent", "Good", "Average", "Poor"],
-        required: true
-      },
-      {
-        id: "q_b3",
-        text: "Are library resources sufficient?",
-        type: "yes_no",
-        required: true
-      },
-      {
-        id: "q_b4",
-        text: "How satisfied are you with internet connectivity?",
-        type: "rating",
-        required: true
-      },
-      {
-        id: "q_b5",
-        text: "What improvements would you suggest?",
-        type: "long_text",
-        required: false
-      }
+      { id: "q1", text: "How satisfied are you with college facilities?", type: "rating", required: true },
+      { id: "q2", text: "How would you rate classroom cleanliness?", type: "multiple_choice", options: ["Excellent", "Good", "Average", "Poor"], required: true },
+      { id: "q3", text: "Are library resources sufficient?", type: "yes_no", required: true },
+      { id: "q4", text: "How satisfied are you with internet connectivity?", type: "rating", required: true },
+      { id: "q5", text: "What improvements would you suggest?", type: "long_text", required: false }
     ]
   },
   {
     id: "survey_c",
     title: "Student Technology Preferences",
-    description: "An exploratory survey to understand students' coding habits, domain interests, and preferred learning paths.",
+    description: "Coding habits, domain interests, and learning resources.",
     status: "Published",
     createdAt: "2026-11-03",
     questions: [
-      {
-        id: "q_c1",
-        text: "Which programming language do you prefer?",
-        type: "multiple_choice",
-        options: ["C", "C++", "Java", "Python", "JavaScript", "Other"],
-        required: true
-      },
-      {
-        id: "q_c2",
-        text: "How often do you practice coding?",
-        type: "multiple_choice",
-        options: ["Daily", "Several times a week", "Occasionally", "Rarely"],
-        required: true
-      },
-      {
-        id: "q_c3",
-        text: "Which area interests you most?",
-        type: "multiple_choice",
-        options: ["Web Development", "Artificial Intelligence", "Cybersecurity", "App Development", "Data Science"],
-        required: true
-      },
-      {
-        id: "q_c4",
-        text: "Which learning method helps you most?",
-        type: "multiple_choice",
-        options: ["YouTube", "Online courses", "Books/notes", "Practical projects", "Classroom teaching"],
-        required: true
-      }
+      { id: "q1", text: "Which programming language do you prefer?", type: "multiple_choice", options: ["C", "C++", "Java", "Python", "JavaScript", "Other"], required: true },
+      { id: "q2", text: "How often do you practice coding?", type: "multiple_choice", options: ["Daily", "Several times a week", "Occasionally", "Rarely"], required: true },
+      { id: "q3", text: "Which area interests you most?", type: "multiple_choice", options: ["Web Development", "Artificial Intelligence", "Cybersecurity", "App Development", "Data Science"], required: true },
+      { id: "q4", text: "Which learning method helps you most?", type: "multiple_choice", options: ["YouTube", "Online courses", "Books/notes", "Practical projects", "Classroom teaching"], required: true }
     ]
   }
 ];
 
-/**
- * Pre-seeded sample responses for Survey A and Survey B
- * Allows the results dashboard to show rich analytics immediately.
- */
 const DEFAULT_RESPONSES = [
-  {
-    responseId: "resp_101",
-    surveyId: "survey_a",
-    submittedAt: "2026-11-03 10:15 AM",
-    answers: {
-      "q_a1": "Data Structures & Algorithms",
-      "q_a2": 5,
-      "q_a3": "Yes",
-      "q_a4": "Very interactive",
-      "q_a5": "Yes",
-      "q_a6": "Live coding/demonstration",
-      "q_a7": "More hands-on coding sessions would be wonderful!"
-    }
-  },
-  {
-    responseId: "resp_102",
-    surveyId: "survey_a",
-    submittedAt: "2026-11-03 02:40 PM",
-    answers: {
-      "q_a1": "Database Management Systems",
-      "q_a2": 4,
-      "q_a3": "Yes",
-      "q_a4": "Interactive",
-      "q_a5": "Yes",
-      "q_a6": "PPT presentation",
-      "q_a7": "Upload the lecture slides before each class."
-    }
-  },
-  {
-    responseId: "resp_103",
-    surveyId: "survey_a",
-    submittedAt: "2026-11-04 11:20 AM",
-    answers: {
-      "q_a1": "Operating Systems",
-      "q_a2": 4,
-      "q_a3": "No",
-      "q_a4": "Average",
-      "q_a5": "No",
-      "q_a6": "Live coding/demonstration",
-      "q_a7": "Please slow down during the CPU scheduling algorithms."
-    }
-  },
-  {
-    responseId: "resp_201",
-    surveyId: "survey_b",
-    submittedAt: "2026-11-03 04:10 PM",
-    answers: {
-      "q_b1": 4,
-      "q_b2": "Good",
-      "q_b3": "Yes",
-      "q_b4": 3,
-      "q_b5": "Wi-Fi speeds in the reading room need an upgrade."
-    }
-  },
-  {
-    responseId: "resp_202",
-    surveyId: "survey_b",
-    submittedAt: "2026-11-04 09:30 AM",
-    answers: {
-      "q_b1": 5,
-      "q_b2": "Excellent",
-      "q_b3": "Yes",
-      "q_b4": 4,
-      "q_b5": "Canteen food quality has improved significantly."
-    }
-  }
+  { responseId: "resp_101", surveyId: "survey_a", submittedAt: "11/3/2026, 10:15 AM", answers: { q1: "Data Structures", q2: 5, q3: "Yes", q4: "Very interactive", q5: "Yes", q6: "Live coding/demonstration", q7: "More practice labs." } },
+  { responseId: "resp_102", surveyId: "survey_a", submittedAt: "11/3/2026, 2:40 PM", answers: { q1: "DBMS", q2: 4, q3: "Yes", q4: "Interactive", q5: "Yes", q6: "PPT presentation", q7: "Share lecture notes early." } },
+  { responseId: "resp_201", surveyId: "survey_b", submittedAt: "11/4/2026, 9:30 AM", answers: { q1: 5, q2: "Excellent", q3: "Yes", q4: 4, q5: "Wi-Fi in library needs upgrade." } }
 ];
 
-/* ==============================================================================
-   DATA STORAGE HELPER FUNCTIONS (LocalStorage API)
-   ============================================================================== */
-
-/**
- * Retrieve surveys from localStorage. If empty, seeds default surveys.
- */
+// 2. STORAGE HELPERS (HTML5 LocalStorage API)
 function getSurveys() {
-  const data = localStorage.getItem(STORAGE_KEYS.SURVEYS);
-  if (!data) {
-    saveSurveys(DEFAULT_SURVEYS);
-    return DEFAULT_SURVEYS;
-  }
-  try {
-    return JSON.parse(data);
-  } catch (e) {
-    console.error("Error parsing surveys from localStorage:", e);
-    return DEFAULT_SURVEYS;
-  }
+  const d = localStorage.getItem('survey_app_surveys');
+  if (!d) { saveSurveys(DEFAULT_SURVEYS); return DEFAULT_SURVEYS; }
+  return JSON.parse(d);
 }
+function saveSurveys(data) { localStorage.setItem('survey_app_surveys', JSON.stringify(data)); }
 
-/**
- * Save an array of surveys to localStorage
- */
-function saveSurveys(surveys) {
-  localStorage.setItem(STORAGE_KEYS.SURVEYS, JSON.stringify(surveys));
-}
-
-/**
- * Retrieve all responses from localStorage. If empty, seeds default responses.
- */
 function getResponses() {
-  const data = localStorage.getItem(STORAGE_KEYS.RESPONSES);
-  if (!data) {
-    saveResponses(DEFAULT_RESPONSES);
-    return DEFAULT_RESPONSES;
-  }
-  try {
-    return JSON.parse(data);
-  } catch (e) {
-    console.error("Error parsing responses from localStorage:", e);
-    return DEFAULT_RESPONSES;
-  }
+  const d = localStorage.getItem('survey_app_responses');
+  if (!d) { saveResponses(DEFAULT_RESPONSES); return DEFAULT_RESPONSES; }
+  return JSON.parse(d);
+}
+function saveResponses(data) { localStorage.setItem('survey_app_responses', JSON.stringify(data)); }
+function escapeHTML(str) { return String(str ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+
+// 3. PUBLIC STUDENT PORTAL (index.html)
+let currentSurvey = null;
+
+function showPublicView(viewId) {
+  ['surveys-view', 'survey-taker-view', 'survey-success-view', 'survey-already-submitted-view'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.toggle('hidden', id !== viewId);
+  });
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-/**
- * Save an array of responses to localStorage
- */
-function saveResponses(responses) {
-  localStorage.setItem(STORAGE_KEYS.RESPONSES, JSON.stringify(responses));
-}
-
-/**
- * Check if the current browser has already submitted a response for a survey
- */
-function hasSubmittedSurvey(surveyId) {
-  return localStorage.getItem(STORAGE_KEYS.SUBMISSIONS_PREFIX + surveyId) === 'true';
-}
-
-/**
- * Mark a survey as submitted on this browser to prevent duplicate entries
- */
-function markSurveySubmitted(surveyId) {
-  localStorage.setItem(STORAGE_KEYS.SUBMISSIONS_PREFIX + surveyId, 'true');
-}
-
-/**
- * Reset all application data back to default demo surveys and sample responses
- */
-function resetAllData() {
-  localStorage.setItem(STORAGE_KEYS.SURVEYS, JSON.stringify(DEFAULT_SURVEYS));
-  localStorage.setItem(STORAGE_KEYS.RESPONSES, JSON.stringify(DEFAULT_RESPONSES));
-  
-  // Clear any browser submission restrictions
-  for (let key in localStorage) {
-    if (key.startsWith(STORAGE_KEYS.SUBMISSIONS_PREFIX)) {
-      localStorage.removeItem(key);
-    }
-  }
-}
-
-/**
- * Safely escape HTML to prevent XSS attacks when displaying user inputs
- */
-function escapeHTML(str) {
-  if (typeof str !== 'string') return str;
-  return str
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
-}
-
-
-/* ==============================================================================
-   PUBLIC STUDENT PORTAL LOGIC (index.html)
-   ============================================================================== */
-
-let activeTakingSurvey = null;
-
-/**
- * Initialize public portal view
- */
-function initPublicPortal() {
-  const surveysGrid = document.getElementById('surveys-grid');
-  if (!surveysGrid) return; // Exit if not on index.html
-
-  updatePublicStats();
-  renderPublicSurveys();
-
-  // Attach navigation listeners
-  const btnBack = document.getElementById('btn-back-to-surveys');
-  if (btnBack) btnBack.addEventListener('click', showSurveysListSection);
-
-  const btnCancel = document.getElementById('btn-cancel-survey');
-  if (btnCancel) btnCancel.addEventListener('click', showSurveysListSection);
-
-  const btnSuccessHome = document.getElementById('btn-success-home');
-  if (btnSuccessHome) btnSuccessHome.addEventListener('click', showSurveysListSection);
-
-  const btnAlreadyBack = document.getElementById('btn-already-back');
-  if (btnAlreadyBack) btnAlreadyBack.addEventListener('click', showSurveysListSection);
-
-  // Attach form submission handler
-  const surveyForm = document.getElementById('survey-taking-form');
-  if (surveyForm) {
-    surveyForm.addEventListener('submit', handleSurveySubmission);
-  }
-}
-
-/**
- * Update the public homepage stats counter
- */
-function updatePublicStats() {
-  const surveys = getSurveys();
-  const responses = getResponses();
-
-  const publishedCount = surveys.filter(s => s.status === 'Published').length;
-
-  const statSurveys = document.getElementById('public-stat-surveys');
-  const statResponses = document.getElementById('public-stat-responses');
-
-  if (statSurveys) statSurveys.textContent = publishedCount;
-  if (statResponses) statResponses.textContent = responses.length;
-}
-
-/**
- * Render all published surveys onto the homepage grid
- */
-function renderPublicSurveys() {
-  const container = document.getElementById('surveys-grid');
-  if (!container) return;
+function initPublic() {
+  const grid = document.getElementById('surveys-grid');
+  if (!grid) return;
 
   const surveys = getSurveys();
   const responses = getResponses();
+  const published = surveys.filter(s => s.status === 'Published');
 
-  const publishedSurveys = surveys.filter(s => s.status === 'Published');
+  // Update homepage statistics
+  document.getElementById('public-stat-surveys').textContent = published.length;
+  document.getElementById('public-stat-responses').textContent = responses.length;
 
-  if (publishedSurveys.length === 0) {
-    container.innerHTML = `
-      <div class="card text-center" style="grid-column: 1 / -1; padding: 3rem;">
-        <h3>No Surveys Currently Available</h3>
-        <p class="text-muted" style="margin-top: 0.5rem;">
-          There are no published surveys open for submissions at this time.
-        </p>
-        <div style="margin-top: 1.5rem;">
-          <a href="admin.html" class="btn btn-primary">Go to Admin Portal</a>
-        </div>
-      </div>
-    `;
-    return;
-  }
-
-  let html = '';
-  publishedSurveys.forEach(survey => {
-    const surveyResponses = responses.filter(r => r.surveyId === survey.id).length;
-    const isSubmitted = hasSubmittedSurvey(survey.id);
-
-    html += `
+  // Render published surveys
+  grid.innerHTML = published.length ? published.map(s => {
+    const count = responses.filter(r => r.surveyId === s.id).length;
+    const isDone = localStorage.getItem('survey_submitted_' + s.id) === 'true';
+    return `
       <div class="card survey-card">
         <div>
           <div class="survey-card-header">
-            <h3 class="survey-card-title">${escapeHTML(survey.title)}</h3>
+            <h3 class="survey-card-title">${escapeHTML(s.title)}</h3>
             <span class="badge badge-published">Published</span>
           </div>
-          <p class="survey-card-desc">${escapeHTML(survey.description || 'No description provided.')}</p>
+          <p class="survey-card-desc">${escapeHTML(s.description || 'No description.')}</p>
         </div>
-
         <div>
           <div class="survey-card-meta">
-            <span>📝 ${survey.questions.length} Questions</span>
-            <span>👥 ${surveyResponses} Responses</span>
+            <span>📝 ${s.questions.length} Questions</span>
+            <span>👥 ${count} Responses</span>
           </div>
-          <div class="survey-card-footer">
-            ${isSubmitted ? `
-              <button class="btn btn-outline btn-block" onclick="openSurveyTaker('${survey.id}')">
-                Completed (Check Status)
-              </button>
-            ` : `
-              <button class="btn btn-primary btn-block" onclick="openSurveyTaker('${survey.id}')">
-                Take Survey →
-              </button>
-            `}
-          </div>
+          <button class="btn ${isDone ? 'btn-outline' : 'btn-primary'} btn-block" onclick="openSurvey('${s.id}')">
+            ${isDone ? 'Completed (Details)' : 'Take Survey →'}
+          </button>
         </div>
-      </div>
-    `;
+      </div>`;
+  }).join('') : '<p class="text-center" style="grid-column:1/-1;">No published surveys open right now.</p>';
+
+  // Button navigation listeners
+  ['btn-back-to-surveys', 'btn-cancel-survey', 'btn-success-home', 'btn-already-back'].forEach(id => {
+    const btn = document.getElementById(id);
+    if (btn) btn.onclick = () => { showPublicView('surveys-view'); initPublic(); };
   });
 
-  container.innerHTML = html;
+  const form = document.getElementById('survey-taking-form');
+  if (form) form.onsubmit = handleSurveySubmit;
 }
 
-/**
- * Open the survey taking form or show 'Already Submitted' message
- */
-function openSurveyTaker(surveyId) {
-  const surveys = getSurveys();
-  const survey = surveys.find(s => s.id === surveyId);
+function openSurvey(id) {
+  const survey = getSurveys().find(s => s.id === id);
   if (!survey) return;
 
-  // Check if student already submitted this survey on this browser
-  if (hasSubmittedSurvey(surveyId)) {
-    hideAllPublicViews();
-    document.getElementById('survey-already-submitted-view').classList.remove('hidden');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+  // Prevent duplicate submissions on the same browser
+  if (localStorage.getItem('survey_submitted_' + id) === 'true') {
+    showPublicView('survey-already-submitted-view');
     return;
   }
 
-  activeTakingSurvey = survey;
-
-  // Set survey metadata
+  currentSurvey = survey;
   document.getElementById('taker-survey-title').textContent = survey.title;
   document.getElementById('taker-survey-desc').textContent = survey.description || '';
   document.getElementById('taker-survey-status').textContent = survey.status;
-
-  // Clear previous validation error alert
   document.getElementById('survey-validation-error').classList.add('hidden');
 
-  // Build Question Elements dynamically
-  const questionsContainer = document.getElementById('survey-questions-container');
-  questionsContainer.innerHTML = '';
-
-  survey.questions.forEach((q, index) => {
-    const questionCard = document.createElement('div');
-    questionCard.className = 'question-taker-card';
-    questionCard.id = `taker-card-${q.id}`;
-
-    let inputMarkup = '';
-
-    switch (q.type) {
-      case 'short_text':
-        inputMarkup = `
-          <input type="text" name="question_${q.id}" id="input_${q.id}" class="form-control" 
-            placeholder="Type your answer here..." ${q.required ? 'data-required="true"' : ''}>
-        `;
-        break;
-
-      case 'long_text':
-        inputMarkup = `
-          <textarea name="question_${q.id}" id="input_${q.id}" class="form-control" rows="3" 
-            placeholder="Type your response here..." ${q.required ? 'data-required="true"' : ''}></textarea>
-        `;
-        break;
-
-      case 'multiple_choice':
-        inputMarkup = `<div class="options-group">`;
-        (q.options || []).forEach((opt, optIndex) => {
-          const radioId = `radio_${q.id}_${optIndex}`;
-          inputMarkup += `
-            <label class="option-item-label" for="${radioId}">
-              <input type="radio" name="question_${q.id}" id="${radioId}" value="${escapeHTML(opt)}" 
-                ${q.required ? 'data-required="true"' : ''}>
-              <span>${escapeHTML(opt)}</span>
-            </label>
-          `;
-        });
-        inputMarkup += `</div>`;
-        break;
-
-      case 'checkbox':
-        inputMarkup = `<div class="options-group">`;
-        (q.options || []).forEach((opt, optIndex) => {
-          const checkId = `check_${q.id}_${optIndex}`;
-          inputMarkup += `
-            <label class="option-item-label" for="${checkId}">
-              <input type="checkbox" name="question_${q.id}" id="${checkId}" value="${escapeHTML(opt)}" 
-                data-group="${q.id}" ${q.required ? 'data-required="true"' : ''}>
-              <span>${escapeHTML(opt)}</span>
-            </label>
-          `;
-        });
-        inputMarkup += `</div>`;
-        break;
-
-      case 'yes_no':
-        inputMarkup = `
-          <div class="yes-no-group">
-            <div class="yes-no-btn">
-              <label class="yes-no-label" id="label_yn_${q.id}_yes">
-                <input type="radio" name="question_${q.id}" value="Yes" 
-                  onchange="handleYesNoChange('${q.id}', 'Yes')" ${q.required ? 'data-required="true"' : ''}>
-                <span>👍 Yes</span>
-              </label>
-            </div>
-            <div class="yes-no-btn">
-              <label class="yes-no-label" id="label_yn_${q.id}_no">
-                <input type="radio" name="question_${q.id}" value="No" 
-                  onchange="handleYesNoChange('${q.id}', 'No')" ${q.required ? 'data-required="true"' : ''}>
-                <span>👎 No</span>
-              </label>
-            </div>
-          </div>
-        `;
-        break;
-
-      case 'rating':
-        inputMarkup = `
-          <div class="rating-group">
-            ${[1, 2, 3, 4, 5].map(val => `
-              <div class="rating-option">
-                <label class="rating-label" id="label_rating_${q.id}_${val}">
-                  <input type="radio" name="question_${q.id}" value="${val}" 
-                    onchange="handleRatingChange('${q.id}', ${val})" ${q.required ? 'data-required="true"' : ''}>
-                  ${val}
-                </label>
-              </div>
-            `).join('')}
-          </div>
-          <div class="rating-scale-legend">
-            <span>1 = Poor / Low</span>
-            <span>5 = Excellent / High</span>
-          </div>
-        `;
-        break;
-
-      default:
-        inputMarkup = `<input type="text" name="question_${q.id}" class="form-control">`;
+  // Build question inputs dynamically based on question type
+  const container = document.getElementById('survey-questions-container');
+  container.innerHTML = survey.questions.map((q, i) => {
+    let inputHTML = '';
+    if (q.type === 'short_text') {
+      inputHTML = `<input type="text" name="q_${q.id}" class="form-control" placeholder="Type your answer...">`;
+    } else if (q.type === 'long_text') {
+      inputHTML = `<textarea name="q_${q.id}" class="form-control" rows="3" placeholder="Type your answer..."></textarea>`;
+    } else if (q.type === 'multiple_choice') {
+      inputHTML = `<div class="options-group">${(q.options || []).map(opt => `
+        <label class="option-item-label"><input type="radio" name="q_${q.id}" value="${escapeHTML(opt)}"> <span>${escapeHTML(opt)}</span></label>
+      `).join('')}</div>`;
+    } else if (q.type === 'checkbox') {
+      inputHTML = `<div class="options-group">${(q.options || []).map(opt => `
+        <label class="option-item-label"><input type="checkbox" name="q_${q.id}" value="${escapeHTML(opt)}"> <span>${escapeHTML(opt)}</span></label>
+      `).join('')}</div>`;
+    } else if (q.type === 'yes_no') {
+      inputHTML = `<div class="yes-no-group">
+        <label class="yes-no-label"><input type="radio" name="q_${q.id}" value="Yes"> 👍 Yes</label>
+        <label class="yes-no-label"><input type="radio" name="q_${q.id}" value="No"> 👎 No</label>
+      </div>`;
+    } else if (q.type === 'rating') {
+      inputHTML = `<div class="rating-group">${[1, 2, 3, 4, 5].map(v => `
+        <label class="rating-label"><input type="radio" name="q_${q.id}" value="${v}"> ${v}</label>
+      `).join('')}</div><div class="rating-scale-legend"><span>1 = Low</span><span>5 = High</span></div>`;
     }
 
-    questionCard.innerHTML = `
-      <div class="question-header">
-        <span class="question-number-badge">${index + 1}</span>
-        <div class="question-prompt">
-          ${escapeHTML(q.text)}
-          ${q.required ? '<span class="required-star">*</span>' : ''}
+    return `
+      <div class="question-taker-card" id="q_card_${q.id}">
+        <div class="question-header">
+          <span class="question-number-badge">${i + 1}</span>
+          <div class="question-prompt">${escapeHTML(q.text)} ${q.required ? '<span class="required-star">*</span>' : ''}</div>
         </div>
-      </div>
-      <div class="question-input-wrapper">
-        ${inputMarkup}
-      </div>
-    `;
+        ${inputHTML}
+      </div>`;
+  }).join('');
 
-    questionsContainer.appendChild(questionCard);
-  });
-
-  // Switch to Survey Taking View
-  hideAllPublicViews();
-  document.getElementById('survey-taker-view').classList.remove('hidden');
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  showPublicView('survey-taker-view');
 }
 
-/**
- * Visual styling update for Rating 1-5 selection
- */
-function handleRatingChange(qId, selectedVal) {
-  for (let i = 1; i <= 5; i++) {
-    const lbl = document.getElementById(`label_rating_${qId}_${i}`);
-    if (lbl) {
-      if (i === selectedVal) {
-        lbl.classList.add('selected');
-      } else {
-        lbl.classList.remove('selected');
-      }
-    }
-  }
-}
-
-/**
- * Visual styling update for Yes/No toggle selection
- */
-function handleYesNoChange(qId, choice) {
-  const lblYes = document.getElementById(`label_yn_${qId}_yes`);
-  const lblNo = document.getElementById(`label_yn_${qId}_no`);
-
-  if (choice === 'Yes') {
-    if (lblYes) lblYes.classList.add('selected');
-    if (lblNo) lblNo.classList.remove('selected');
-  } else {
-    if (lblNo) lblNo.classList.add('selected');
-    if (lblYes) lblYes.classList.remove('selected');
-  }
-}
-
-/**
- * Validate and submit user survey responses
- */
-function handleSurveySubmission(e) {
+function handleSurveySubmit(e) {
   e.preventDefault();
-  if (!activeTakingSurvey) return;
+  const form = e.target;
+  const answers = {};
+  let valid = true;
 
-  const form = document.getElementById('survey-taking-form');
-  const errorAlert = document.getElementById('survey-validation-error');
-  let isValid = true;
-  let firstErrorCard = null;
+  document.querySelectorAll('.question-taker-card').forEach(c => c.classList.remove('has-error'));
 
-  // Clear previous error styles
-  document.querySelectorAll('.question-taker-card').forEach(card => card.classList.remove('has-error'));
+  // Validate all questions
+  for (let q of currentSurvey.questions) {
+    const fieldName = `q_${q.id}`;
+    let val;
 
-  const collectedAnswers = {};
-
-  // Validate each question according to rules
-  for (let q of activeTakingSurvey.questions) {
-    const fieldName = `question_${q.id}`;
-
-    if (q.type === 'short_text' || q.type === 'long_text') {
-      const inputEl = form.elements[fieldName];
-      const val = inputEl ? inputEl.value.trim() : '';
-
-      if (q.required && val === '') {
-        isValid = false;
-        markQuestionError(q.id);
-        if (!firstErrorCard) firstErrorCard = document.getElementById(`taker-card-${q.id}`);
-      } else {
-        collectedAnswers[q.id] = val;
-      }
-    } 
-    else if (q.type === 'multiple_choice' || q.type === 'yes_no' || q.type === 'rating') {
+    if (q.type === 'checkbox') {
+      val = Array.from(form.querySelectorAll(`input[name="${fieldName}"]:checked`)).map(c => c.value);
+      if (q.required && val.length === 0) valid = false;
+    } else if (q.type === 'multiple_choice' || q.type === 'yes_no' || q.type === 'rating') {
       const selected = form.querySelector(`input[name="${fieldName}"]:checked`);
-      if (q.required && !selected) {
-        isValid = false;
-        markQuestionError(q.id);
-        if (!firstErrorCard) firstErrorCard = document.getElementById(`taker-card-${q.id}`);
-      } else {
-        collectedAnswers[q.id] = selected ? (q.type === 'rating' ? Number(selected.value) : selected.value) : '';
-      }
-    } 
-    else if (q.type === 'checkbox') {
-      const checkedBoxes = form.querySelectorAll(`input[name="${fieldName}"]:checked`);
-      const checkedValues = Array.from(checkedBoxes).map(cb => cb.value);
-
-      if (q.required && checkedValues.length === 0) {
-        isValid = false;
-        markQuestionError(q.id);
-        if (!firstErrorCard) firstErrorCard = document.getElementById(`taker-card-${q.id}`);
-      } else {
-        collectedAnswers[q.id] = checkedValues;
-      }
+      val = selected ? (q.type === 'rating' ? Number(selected.value) : selected.value) : '';
+      if (q.required && !val) valid = false;
+    } else {
+      val = (form.elements[fieldName]?.value || '').trim();
+      if (q.required && !val) valid = false;
     }
+
+    if (q.required && (!val || (Array.isArray(val) && !val.length))) {
+      document.getElementById(`q_card_${q.id}`)?.classList.add('has-error');
+    }
+    answers[q.id] = val;
   }
 
-  // If validation fails, display error banner and focus on first error
-  if (!isValid) {
-    errorAlert.classList.remove('hidden');
-    if (firstErrorCard) {
-      firstErrorCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
+  const errBox = document.getElementById('survey-validation-error');
+  if (!valid) {
+    errBox.classList.remove('hidden');
+    document.querySelector('.has-error')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     return;
   }
+  errBox.classList.add('hidden');
 
-  // Validation succeeded -> Save response
-  errorAlert.classList.add('hidden');
-
-  const now = new Date();
-  const formattedTime = now.toLocaleDateString() + ' ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  const newResponseId = 'resp_' + Date.now();
-
-  const newResponse = {
-    responseId: newResponseId,
-    surveyId: activeTakingSurvey.id,
-    surveyTitle: activeTakingSurvey.title,
-    submittedAt: formattedTime,
-    answers: collectedAnswers
+  // Save response to localStorage
+  const newResp = {
+    responseId: 'resp_' + Date.now(),
+    surveyId: currentSurvey.id,
+    submittedAt: new Date().toLocaleString(),
+    answers
   };
 
-  const allResponses = getResponses();
-  allResponses.push(newResponse);
-  saveResponses(allResponses);
+  const all = getResponses();
+  all.push(newResp);
+  saveResponses(all);
+  localStorage.setItem('survey_submitted_' + currentSurvey.id, 'true'); // Flag duplicate prevention
 
-  // Prevent repeat submissions for this survey on this browser
-  markSurveySubmitted(activeTakingSurvey.id);
-
-  // Populate and show thank you view
-  document.getElementById('success-survey-name').textContent = activeTakingSurvey.title;
-  document.getElementById('success-response-id').textContent = newResponseId;
-  document.getElementById('success-response-time').textContent = formattedTime;
-
-  hideAllPublicViews();
-  document.getElementById('survey-success-view').classList.remove('hidden');
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-
-  // Update public statistics
-  updatePublicStats();
+  document.getElementById('success-survey-name').textContent = currentSurvey.title;
+  document.getElementById('success-response-id').textContent = newResp.responseId;
+  document.getElementById('success-response-time').textContent = newResp.submittedAt;
+  showPublicView('survey-success-view');
 }
 
-function markQuestionError(questionId) {
-  const card = document.getElementById(`taker-card-${questionId}`);
-  if (card) {
-    card.classList.add('has-error');
-  }
-}
+// 4. ADMIN PORTAL (admin.html)
+let editingSurveyId = null;
+let builderQuestions = [];
+let activeSurvey = null;
 
-function showSurveysListSection() {
-  hideAllPublicViews();
-  const listView = document.getElementById('surveys-view');
-  if (listView) listView.classList.remove('hidden');
-  renderPublicSurveys();
-  updatePublicStats();
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-function hideAllPublicViews() {
-  const views = [
-    'surveys-view',
-    'survey-taker-view',
-    'survey-success-view',
-    'survey-already-submitted-view'
-  ];
-  views.forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.classList.add('hidden');
+function showAdminSection(panelId) {
+  ['admin-surveys-list-panel', 'admin-survey-editor-panel', 'admin-results-panel'].forEach(id => {
+    document.getElementById(id).classList.toggle('hidden', id !== panelId);
   });
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
+function showSurveyList() {
+  showAdminSection('admin-surveys-list-panel');
+  renderDashboard();
+}
 
-/* ==============================================================================
-   ADMINISTRATOR DASHBOARD LOGIC (admin.html)
-   ============================================================================== */
-
-let currentEditingSurveyId = null; // null if creating a new survey
-let builderQuestions = [];         // In-memory questions array during creation/editing
-
-/**
- * Initialize admin portal
- */
-function initAdminPortal() {
+function initAdmin() {
   const loginForm = document.getElementById('admin-login-form');
-  if (!loginForm) return; // Exit if not on admin.html
+  if (!loginForm) return;
 
-  // Check existing session
-  checkAdminAuth();
+  const isAuth = sessionStorage.getItem('survey_admin_auth') === 'true';
+  document.getElementById('admin-login-view').classList.toggle('hidden', isAuth);
+  document.getElementById('admin-dashboard-view').classList.toggle('hidden', !isAuth);
+  document.getElementById('admin-user-pill')?.classList.toggle('hidden', !isAuth);
 
-  // Attach login listener
-  loginForm.addEventListener('submit', handleAdminLogin);
+  if (isAuth) renderDashboard();
 
-  // Attach logout listener
-  const btnLogout = document.getElementById('btn-admin-logout');
-  if (btnLogout) {
-    btnLogout.addEventListener('click', handleAdminLogout);
-  }
+  loginForm.onsubmit = (e) => {
+    e.preventDefault();
+    const u = document.getElementById('admin-username').value.trim();
+    const p = document.getElementById('admin-password').value.trim();
+    if (u === 'admin' && p === 'admin123') {
+      sessionStorage.setItem('survey_admin_auth', 'true');
+      initAdmin();
+    } else {
+      document.getElementById('login-error-alert').classList.remove('hidden');
+    }
+  };
 
-  // Dashboard top actions
-  const btnCreate = document.getElementById('btn-open-create-survey');
-  if (btnCreate) {
-    btnCreate.addEventListener('click', () => openSurveyEditor(null));
-  }
+  document.getElementById('btn-admin-logout').onclick = () => {
+    sessionStorage.removeItem('survey_admin_auth');
+    initAdmin();
+  };
 
-  const btnReset = document.getElementById('btn-reset-demo-data');
-  if (btnReset) {
-    btnReset.addEventListener('click', confirmResetDemoData);
-  }
+  document.getElementById('btn-reset-demo-data').onclick = () => {
+    if (confirm("Reset to default sample surveys and responses?")) {
+      saveSurveys(DEFAULT_SURVEYS);
+      saveResponses(DEFAULT_RESPONSES);
+      for (let k in localStorage) { if (k.startsWith('survey_submitted_')) localStorage.removeItem(k); }
+      renderDashboard();
+      alert("Demo data restored!");
+    }
+  };
 
-  // Editor Actions
-  const btnAddQ = document.getElementById('btn-add-question');
-  if (btnAddQ) {
-    btnAddQ.addEventListener('click', addNewQuestionToBuilder);
-  }
-
-  const btnCancelEditor = document.getElementById('btn-cancel-editor');
-  if (btnCancelEditor) {
-    btnCancelEditor.addEventListener('click', cancelSurveyEditor);
-  }
-
-  const btnDiscardSurvey = document.getElementById('btn-discard-survey');
-  if (btnDiscardSurvey) {
-    btnDiscardSurvey.addEventListener('click', cancelSurveyEditor);
-  }
-
-  const editorForm = document.getElementById('survey-editor-form');
-  if (editorForm) {
-    editorForm.addEventListener('submit', handleSaveSurvey);
-  }
-
-  // Results Actions
-  const btnBackResults = document.getElementById('btn-back-from-results');
-  if (btnBackResults) {
-    btnBackResults.addEventListener('click', showAdminSurveysTable);
-  }
-
-  const btnExportCSV = document.getElementById('btn-export-csv');
-  if (btnExportCSV) {
-    btnExportCSV.addEventListener('click', exportActiveSurveyCSV);
-  }
+  document.getElementById('btn-open-create-survey').onclick = () => openEditor(null);
+  document.getElementById('btn-cancel-editor').onclick = showSurveyList;
+  document.getElementById('btn-discard-survey').onclick = showSurveyList;
+  document.getElementById('btn-add-question').onclick = addBuilderQuestion;
+  document.getElementById('survey-editor-form').onsubmit = saveSurveyForm;
+  document.getElementById('btn-back-from-results').onclick = showSurveyList;
+  document.getElementById('btn-export-csv').onclick = exportCSV;
 }
 
-/**
- * Check if administrator is already logged in
- */
-function checkAdminAuth() {
-  const isAuthenticated = sessionStorage.getItem(STORAGE_KEYS.ADMIN_AUTH) === 'true';
-
-  const loginView = document.getElementById('admin-login-view');
-  const dashboardView = document.getElementById('admin-dashboard-view');
-  const userPill = document.getElementById('admin-user-pill');
-
-  if (isAuthenticated) {
-    if (loginView) loginView.classList.add('hidden');
-    if (dashboardView) dashboardView.classList.remove('hidden');
-    if (userPill) userPill.classList.remove('hidden');
-    renderAdminDashboard();
-  } else {
-    if (loginView) loginView.classList.remove('hidden');
-    if (dashboardView) dashboardView.classList.add('hidden');
-    if (userPill) userPill.classList.add('hidden');
-  }
-}
-
-/**
- * Demo Login handler: checks username 'admin' and password 'admin123'
- */
-function handleAdminLogin(e) {
-  e.preventDefault();
-  const usernameInput = document.getElementById('admin-username');
-  const passwordInput = document.getElementById('admin-password');
-  const errorAlert = document.getElementById('login-error-alert');
-
-  const username = usernameInput ? usernameInput.value.trim() : '';
-  const password = passwordInput ? passwordInput.value.trim() : '';
-
-  // Academic Demo Credentials Verification
-  if (username === 'admin' && password === 'admin123') {
-    sessionStorage.setItem(STORAGE_KEYS.ADMIN_AUTH, 'true');
-    if (errorAlert) errorAlert.classList.add('hidden');
-    usernameInput.value = '';
-    passwordInput.value = '';
-    checkAdminAuth();
-  } else {
-    if (errorAlert) errorAlert.classList.remove('hidden');
-  }
-}
-
-/**
- * Administrator logout
- */
-function handleAdminLogout() {
-  sessionStorage.removeItem(STORAGE_KEYS.ADMIN_AUTH);
-  checkAdminAuth();
-}
-
-/**
- * Render admin KPI metrics and survey table
- */
-function renderAdminDashboard() {
+function renderDashboard() {
   const surveys = getSurveys();
   const responses = getResponses();
+  const published = surveys.filter(s => s.status === 'Published').length;
 
-  const totalSurveys = surveys.length;
-  const publishedCount = surveys.filter(s => s.status === 'Published').length;
-  const draftsCount = totalSurveys - publishedCount;
-  const totalResponses = responses.length;
+  document.getElementById('kpi-total-surveys').textContent = surveys.length;
+  document.getElementById('kpi-published-surveys').textContent = published;
+  document.getElementById('kpi-total-responses').textContent = responses.length;
+  document.getElementById('kpi-draft-surveys').textContent = surveys.length - published;
+  document.getElementById('table-surveys-count').textContent = `${surveys.length} Surveys Registered`;
 
-  // Update KPI counters
-  document.getElementById('kpi-total-surveys').textContent = totalSurveys;
-  document.getElementById('kpi-published-surveys').textContent = publishedCount;
-  document.getElementById('kpi-total-responses').textContent = totalResponses;
-  document.getElementById('kpi-draft-surveys').textContent = draftsCount;
-  document.getElementById('table-surveys-count').textContent = `${totalSurveys} Surveys Registered`;
-
-  // Render surveys table rows
-  const tableBody = document.getElementById('admin-surveys-table-body');
-  if (!tableBody) return;
-
-  if (surveys.length === 0) {
-    tableBody.innerHTML = `
+  const tbody = document.getElementById('admin-surveys-table-body');
+  tbody.innerHTML = surveys.map(s => {
+    const count = responses.filter(r => r.surveyId === s.id).length;
+    return `
       <tr>
-        <td colspan="6" class="text-center" style="padding: 2rem;">
-          No surveys found. Click "➕ Create New Survey" or "🔄 Reset Sample Surveys".
-        </td>
-      </tr>
-    `;
-    return;
-  }
-
-  let rowsHtml = '';
-  surveys.forEach(survey => {
-    const surveyResponsesCount = responses.filter(r => r.surveyId === survey.id).length;
-
-    rowsHtml += `
-      <tr>
+        <td><strong>${escapeHTML(s.title)}</strong><br><small class="text-muted">${s.id}</small></td>
+        <td>${s.questions.length}</td>
         <td>
-          <strong>${escapeHTML(survey.title)}</strong>
-          <div class="text-muted" style="font-size: 0.8rem;">ID: ${survey.id}</div>
-        </td>
-        <td>${survey.questions.length}</td>
-        <td>
-          <select class="form-control" style="padding: 0.25rem 0.5rem; font-size: 0.85rem; width: 120px;" 
-            onchange="updateSurveyStatus('${survey.id}', this.value)">
-            <option value="Draft" ${survey.status === 'Draft' ? 'selected' : ''}>Draft</option>
-            <option value="Published" ${survey.status === 'Published' ? 'selected' : ''}>Published</option>
-            <option value="Closed" ${survey.status === 'Closed' ? 'selected' : ''}>Closed</option>
+          <select class="form-control" style="width:115px;padding:4px 6px;" onchange="changeStatus('${s.id}', this.value)">
+            <option value="Draft" ${s.status === 'Draft' ? 'selected' : ''}>Draft</option>
+            <option value="Published" ${s.status === 'Published' ? 'selected' : ''}>Published</option>
+            <option value="Closed" ${s.status === 'Closed' ? 'selected' : ''}>Closed</option>
           </select>
         </td>
-        <td>
-          <span class="badge badge-info">${surveyResponsesCount}</span>
-        </td>
-        <td style="font-size: 0.85rem; color: var(--text-muted);">${survey.createdAt || 'N/A'}</td>
+        <td><span class="badge badge-info">${count}</span></td>
+        <td>${s.createdAt || 'N/A'}</td>
         <td>
           <div class="table-action-btns">
-            <button class="btn btn-outline btn-xs" onclick="viewSurveyResults('${survey.id}')" title="View Results & Analytics">
-              📊 Results
-            </button>
-            <button class="btn btn-outline btn-xs" onclick="openSurveyEditor('${survey.id}')" title="Edit Survey">
-              ✏️ Edit
-            </button>
-            <button class="btn btn-danger-outline btn-xs" onclick="deleteSurvey('${survey.id}')" title="Delete Survey">
-              🗑️ Delete
-            </button>
+            <button class="btn btn-outline btn-xs" onclick="viewResults('${s.id}')">📊 Results</button>
+            <button class="btn btn-outline btn-xs" onclick="openEditor('${s.id}')">✏️ Edit</button>
+            <button class="btn btn-danger-outline btn-xs" onclick="deleteSurvey('${s.id}')">🗑️ Delete</button>
           </div>
         </td>
-      </tr>
-    `;
-  });
-
-  tableBody.innerHTML = rowsHtml;
+      </tr>`;
+  }).join('');
 }
 
-/**
- * Quick inline status change (Draft / Published / Closed)
- */
-function updateSurveyStatus(surveyId, newStatus) {
-  const surveys = getSurveys();
-  const survey = surveys.find(s => s.id === surveyId);
-  if (survey) {
-    survey.status = newStatus;
-    saveSurveys(surveys);
-    renderAdminDashboard();
-  }
+function changeStatus(id, newStatus) {
+  const list = getSurveys();
+  const s = list.find(x => x.id === id);
+  if (s) { s.status = newStatus; saveSurveys(list); renderDashboard(); }
 }
 
-/**
- * Delete a survey and all its responses after confirmation
- */
-function deleteSurvey(surveyId) {
-  const surveys = getSurveys();
-  const survey = surveys.find(s => s.id === surveyId);
-  if (!survey) return;
-
-  const confirmed = confirm(`Are you sure you want to permanently delete "${survey.title}" and all its collected responses?`);
-  if (!confirmed) return;
-
-  // Remove survey
-  const updatedSurveys = surveys.filter(s => s.id !== surveyId);
-  saveSurveys(updatedSurveys);
-
-  // Remove corresponding responses
-  const responses = getResponses();
-  const updatedResponses = responses.filter(r => r.surveyId !== surveyId);
-  saveResponses(updatedResponses);
-
-  renderAdminDashboard();
+function deleteSurvey(id) {
+  if (!confirm("Are you sure you want to delete this survey and its responses?")) return;
+  saveSurveys(getSurveys().filter(s => s.id !== id));
+  saveResponses(getResponses().filter(r => r.surveyId !== id));
+  renderDashboard();
 }
 
-/**
- * Confirm and reset data back to default sample surveys A, B, C
- */
-function confirmResetDemoData() {
-  const confirmed = confirm("Reset all data back to original sample surveys (A, B, C) and demo responses?");
-  if (confirmed) {
-    resetAllData();
-    renderAdminDashboard();
-    alert("Sample surveys and demo responses have been successfully restored!");
-  }
-}
+// 5. SURVEY EDITOR BUILDER (CREATE / EDIT)
+function openEditor(id) {
+  editingSurveyId = id;
+  document.getElementById('editor-validation-error').classList.add('hidden');
 
-/* ==============================================================================
-   SURVEY EDITOR BUILDER LOGIC (CREATE / EDIT)
-   ============================================================================== */
-
-/**
- * Open Survey Editor (pass surveyId to edit, or null to create new)
- */
-function openSurveyEditor(surveyId) {
-  currentEditingSurveyId = surveyId;
-  const heading = document.getElementById('editor-heading');
-  const titleInput = document.getElementById('edit-survey-title');
-  const descInput = document.getElementById('edit-survey-desc');
-  const statusSelect = document.getElementById('edit-survey-status');
-  const errorAlert = document.getElementById('editor-validation-error');
-
-  errorAlert.classList.add('hidden');
-
-  if (surveyId) {
-    // Edit Mode
-    const surveys = getSurveys();
-    const survey = surveys.find(s => s.id === surveyId);
-    if (!survey) return;
-
-    heading.textContent = "Edit Survey: " + survey.title;
-    titleInput.value = survey.title;
-    descInput.value = survey.description || '';
-    statusSelect.value = survey.status;
-
-    // Deep clone questions into builder
-    builderQuestions = JSON.parse(JSON.stringify(survey.questions));
+  if (id) {
+    const s = getSurveys().find(x => x.id === id);
+    document.getElementById('editor-heading').textContent = "Edit Survey";
+    document.getElementById('edit-survey-title').value = s.title;
+    document.getElementById('edit-survey-desc').value = s.description || '';
+    document.getElementById('edit-survey-status').value = s.status;
+    builderQuestions = JSON.parse(JSON.stringify(s.questions));
   } else {
-    // Create New Mode
-    heading.textContent = "Create New Survey";
-    titleInput.value = '';
-    descInput.value = '';
-    statusSelect.value = 'Published';
-
-    // Start with 1 default question
-    builderQuestions = [
-      {
-        id: 'q_' + Date.now(),
-        text: '',
-        type: 'multiple_choice',
-        options: ['Option 1', 'Option 2'],
-        required: true
-      }
-    ];
+    document.getElementById('editor-heading').textContent = "Create New Survey";
+    document.getElementById('edit-survey-title').value = '';
+    document.getElementById('edit-survey-desc').value = '';
+    document.getElementById('edit-survey-status').value = 'Published';
+    builderQuestions = [{ id: 'q_' + Date.now(), text: '', type: 'multiple_choice', options: ['Option 1', 'Option 2'], required: true }];
   }
-
-  renderBuilderQuestions();
-
-  // Switch views
-  document.getElementById('admin-surveys-list-panel').classList.add('hidden');
-  document.getElementById('admin-results-panel').classList.add('hidden');
-  document.getElementById('admin-survey-editor-panel').classList.remove('hidden');
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  renderBuilder();
+  showAdminSection('admin-survey-editor-panel');
 }
 
-/**
- * Add a new empty question to the builder
- */
-function addNewQuestionToBuilder() {
-  builderQuestions.push({
-    id: 'q_' + Date.now() + '_' + Math.floor(Math.random() * 1000),
-    text: '',
-    type: 'multiple_choice',
-    options: ['Option 1', 'Option 2'],
-    required: true
-  });
-  renderBuilderQuestions();
+function addBuilderQuestion() {
+  builderQuestions.push({ id: 'q_' + Date.now(), text: '', type: 'multiple_choice', options: ['Option 1', 'Option 2'], required: true });
+  renderBuilder();
 }
 
-/**
- * Render the questions currently in the editor builder
- */
-function renderBuilderQuestions() {
-  const container = document.getElementById('builder-questions-list');
-  if (!container) return;
-
-  if (builderQuestions.length === 0) {
-    container.innerHTML = `
-      <div class="card text-center" style="padding: 2rem;">
-        <p class="text-muted">No questions added yet. Click "➕ Add Question" above.</p>
+function renderBuilder() {
+  const list = document.getElementById('builder-questions-list');
+  list.innerHTML = builderQuestions.map((q, i) => `
+    <div class="question-builder-card">
+      <div class="builder-card-top">
+        <strong>Question #${i + 1}</strong>
+        <button type="button" class="btn btn-danger-outline btn-xs" onclick="removeBuilderQ(${i})">✖ Remove</button>
       </div>
-    `;
-    return;
-  }
-
-  let html = '';
-  builderQuestions.forEach((q, index) => {
-    const isChoiceType = (q.type === 'multiple_choice' || q.type === 'checkbox');
-
-    html += `
-      <div class="question-builder-card" id="q-card-${q.id}">
-        <div class="builder-card-top">
-          <span class="builder-card-title">Question #${index + 1}</span>
-          <button type="button" class="btn btn-danger-outline btn-xs" onclick="removeBuilderQuestion(${index})">
-            ✖ Remove Question
-          </button>
+      <div class="builder-grid">
+        <div>
+          <label class="form-label">Question Text *</label>
+          <input type="text" class="form-control" value="${escapeHTML(q.text)}" oninput="builderQuestions[${i}].text=this.value">
         </div>
-
-        <div class="builder-grid">
-          <div class="form-group" style="margin-bottom: 0;">
-            <label class="form-label">Question Text <span class="required-star">*</span></label>
-            <input type="text" class="form-control" placeholder="Enter question..." 
-              value="${escapeHTML(q.text)}" oninput="updateBuilderQuestionText(${index}, this.value)">
-          </div>
-
-          <div class="form-group" style="margin-bottom: 0;">
-            <label class="form-label">Question Type</label>
-            <select class="form-control" onchange="updateBuilderQuestionType(${index}, this.value)">
-              <option value="short_text" ${q.type === 'short_text' ? 'selected' : ''}>Short Text</option>
-              <option value="long_text" ${q.type === 'long_text' ? 'selected' : ''}>Long Text</option>
-              <option value="multiple_choice" ${q.type === 'multiple_choice' ? 'selected' : ''}>Multiple Choice (Radio)</option>
-              <option value="checkbox" ${q.type === 'checkbox' ? 'selected' : ''}>Checkboxes (Multiple Answers)</option>
-              <option value="yes_no" ${q.type === 'yes_no' ? 'selected' : ''}>Yes / No</option>
-              <option value="rating" ${q.type === 'rating' ? 'selected' : ''}>Rating (1 to 5)</option>
-            </select>
-          </div>
-
-          <div class="form-group" style="margin-bottom: 0;">
-            <label class="checkbox-label">
-              <input type="checkbox" ${q.required ? 'checked' : ''} onchange="updateBuilderQuestionRequired(${index}, this.checked)">
-              <span>Required?</span>
-            </label>
-          </div>
+        <div>
+          <label class="form-label">Question Type</label>
+          <select class="form-control" onchange="builderQuestions[${i}].type=this.value; if((this.value==='multiple_choice'||this.value==='checkbox')&&!builderQuestions[${i}].options) builderQuestions[${i}].options=['Option 1','Option 2']; renderBuilder();">
+            <option value="short_text" ${q.type==='short_text'?'selected':''}>Short Text</option>
+            <option value="long_text" ${q.type==='long_text'?'selected':''}>Long Text</option>
+            <option value="multiple_choice" ${q.type==='multiple_choice'?'selected':''}>Multiple Choice</option>
+            <option value="checkbox" ${q.type==='checkbox'?'selected':''}>Checkboxes</option>
+            <option value="yes_no" ${q.type==='yes_no'?'selected':''}>Yes / No</option>
+            <option value="rating" ${q.type==='rating'?'selected':''}>Rating (1-5)</option>
+          </select>
         </div>
-
-        <!-- Dynamic Answer Options Section (for MCQ / Checkboxes) -->
-        ${isChoiceType ? `
-          <div class="options-builder-box">
-            <div class="options-builder-title">Answer Options (Minimum 2 required)</div>
-            <div id="builder-options-list-${index}">
-              ${(q.options || []).map((opt, optIndex) => `
-                <div class="option-builder-row">
-                  <input type="text" class="form-control" style="padding: 0.4rem 0.75rem;" 
-                    placeholder="Option ${optIndex + 1}" value="${escapeHTML(opt)}"
-                    oninput="updateBuilderOptionText(${index}, ${optIndex}, this.value)">
-                  <button type="button" class="btn btn-outline btn-xs" onclick="removeBuilderOption(${index}, ${optIndex})" 
-                    ${(q.options.length <= 2) ? 'disabled title="Minimum 2 options needed"' : ''}>
-                    🗑️
-                  </button>
-                </div>
-              `).join('')}
+        <div>
+          <label class="checkbox-label" style="margin-top:28px;">
+            <input type="checkbox" ${q.required?'checked':''} onchange="builderQuestions[${i}].required=this.checked"> Required
+          </label>
+        </div>
+      </div>
+      ${(q.type === 'multiple_choice' || q.type === 'checkbox') ? `
+        <div class="options-builder-box">
+          <small><strong>Options (min 2):</strong></small>
+          ${(q.options || []).map((opt, oi) => `
+            <div class="option-builder-row">
+              <input type="text" class="form-control" value="${escapeHTML(opt)}" oninput="builderQuestions[${i}].options[${oi}]=this.value">
+              <button type="button" class="btn btn-outline btn-xs" onclick="builderQuestions[${i}].options.splice(${oi},1); renderBuilder();" ${q.options.length<=2?'disabled':''}>🗑️</button>
             </div>
-            <button type="button" class="btn btn-outline btn-xs" style="margin-top: 0.5rem;" onclick="addBuilderOption(${index})">
-              ➕ Add Another Option
-            </button>
-          </div>
-        ` : ''}
-
-      </div>
-    `;
-  });
-
-  container.innerHTML = html;
+          `).join('')}
+          <button type="button" class="btn btn-outline btn-xs" style="margin-top:5px;" onclick="builderQuestions[${i}].options.push('Option '+(builderQuestions[${i}].options.length+1)); renderBuilder();">➕ Add Option</button>
+        </div>
+      ` : ''}
+    </div>
+  `).join('');
 }
 
-// In-Memory Question Mutators
-function updateBuilderQuestionText(qIndex, val) {
-  builderQuestions[qIndex].text = val;
+function removeBuilderQ(index) {
+  if (builderQuestions.length <= 1) return alert("A survey must have at least 1 question.");
+  builderQuestions.splice(index, 1);
+  renderBuilder();
 }
 
-function updateBuilderQuestionType(qIndex, newType) {
-  builderQuestions[qIndex].type = newType;
-  if ((newType === 'multiple_choice' || newType === 'checkbox') && (!builderQuestions[qIndex].options || builderQuestions[qIndex].options.length === 0)) {
-    builderQuestions[qIndex].options = ['Option 1', 'Option 2'];
-  }
-  renderBuilderQuestions();
-}
-
-function updateBuilderQuestionRequired(qIndex, isRequired) {
-  builderQuestions[qIndex].required = isRequired;
-}
-
-function removeBuilderQuestion(qIndex) {
-  if (builderQuestions.length <= 1) {
-    alert("A survey must have at least one question.");
-    return;
-  }
-  builderQuestions.splice(qIndex, 1);
-  renderBuilderQuestions();
-}
-
-function addBuilderOption(qIndex) {
-  if (!builderQuestions[qIndex].options) builderQuestions[qIndex].options = [];
-  builderQuestions[qIndex].options.push(`Option ${builderQuestions[qIndex].options.length + 1}`);
-  renderBuilderQuestions();
-}
-
-function updateBuilderOptionText(qIndex, optIndex, val) {
-  builderQuestions[qIndex].options[optIndex] = val;
-}
-
-function removeBuilderOption(qIndex, optIndex) {
-  if (builderQuestions[qIndex].options.length <= 2) {
-    alert("Multiple-choice / Checkbox questions require at least two options.");
-    return;
-  }
-  builderQuestions[qIndex].options.splice(optIndex, 1);
-  renderBuilderQuestions();
-}
-
-/**
- * Validate and Save Survey into LocalStorage
- */
-function handleSaveSurvey(e) {
+function saveSurveyForm(e) {
   e.preventDefault();
-  const titleInput = document.getElementById('edit-survey-title');
-  const descInput = document.getElementById('edit-survey-desc');
-  const statusSelect = document.getElementById('edit-survey-status');
-  const errorAlert = document.getElementById('editor-validation-error');
+  const title = document.getElementById('edit-survey-title').value.trim();
+  const desc = document.getElementById('edit-survey-desc').value.trim();
+  const status = document.getElementById('edit-survey-status').value;
+  const errBox = document.getElementById('editor-validation-error');
 
-  const title = titleInput.value.trim();
-  const desc = descInput.value.trim();
-  const status = statusSelect.value;
-
-  // Validation Checks
-  if (!title) {
-    errorAlert.textContent = "Validation Error: Survey Title cannot be empty.";
-    errorAlert.classList.remove('hidden');
-    titleInput.focus();
-    return;
-  }
-
-  if (builderQuestions.length === 0) {
-    errorAlert.textContent = "Validation Error: Please add at least one question to the survey.";
-    errorAlert.classList.remove('hidden');
-    return;
-  }
-
-  for (let i = 0; i < builderQuestions.length; i++) {
-    const q = builderQuestions[i];
-    if (!q.text.trim()) {
-      errorAlert.textContent = `Validation Error: Question #${i + 1} has empty question text.`;
-      errorAlert.classList.remove('hidden');
-      return;
-    }
-
-    if (q.type === 'multiple_choice' || q.type === 'checkbox') {
-      const validOptions = (q.options || []).map(o => o.trim()).filter(o => o !== '');
-      if (validOptions.length < 2) {
-        errorAlert.textContent = `Validation Error: Question #${i + 1} (${q.text}) must have at least 2 non-empty answer options.`;
-        errorAlert.classList.remove('hidden');
-        return;
-      }
-      q.options = validOptions;
+  if (!title) { errBox.textContent = "Survey title cannot be empty!"; errBox.classList.remove('hidden'); return; }
+  for (let [idx, q] of builderQuestions.entries()) {
+    if (!q.text.trim()) { errBox.textContent = `Question #${idx+1} is missing question text!`; errBox.classList.remove('hidden'); return; }
+    if ((q.type === 'multiple_choice' || q.type === 'checkbox') && (!q.options || q.options.filter(o => o.trim()).length < 2)) {
+      errBox.textContent = `Question #${idx+1} must have at least 2 options!`; errBox.classList.remove('hidden'); return;
     }
   }
-
-  errorAlert.classList.add('hidden');
 
   const surveys = getSurveys();
-
-  if (currentEditingSurveyId) {
-    // Update existing survey
-    const index = surveys.findIndex(s => s.id === currentEditingSurveyId);
-    if (index !== -1) {
-      surveys[index].title = title;
-      surveys[index].description = desc;
-      surveys[index].status = status;
-      surveys[index].questions = builderQuestions;
-    }
+  if (editingSurveyId) {
+    const idx = surveys.findIndex(s => s.id === editingSurveyId);
+    if (idx !== -1) { surveys[idx].title = title; surveys[idx].description = desc; surveys[idx].status = status; surveys[idx].questions = builderQuestions; }
   } else {
-    // Create new survey
-    const newSurvey = {
-      id: "survey_" + Date.now(),
-      title: title,
-      description: desc,
-      status: status,
-      createdAt: new Date().toISOString().split('T')[0],
-      questions: builderQuestions
-    };
-    surveys.push(newSurvey);
+    surveys.push({ id: 'survey_' + Date.now(), title, description: desc, status, createdAt: new Date().toISOString().split('T')[0], questions: builderQuestions });
   }
-
   saveSurveys(surveys);
-  cancelSurveyEditor();
+  showSurveyList();
 }
 
-function cancelSurveyEditor() {
-  document.getElementById('admin-survey-editor-panel').classList.add('hidden');
-  document.getElementById('admin-results-panel').classList.add('hidden');
-  document.getElementById('admin-surveys-list-panel').classList.remove('hidden');
-  renderAdminDashboard();
-}
+// 6. RESULTS & ANALYTICS DASHBOARD
+function viewResults(id) {
+  activeSurvey = getSurveys().find(s => s.id === id);
+  if (!activeSurvey) return;
+  const responses = getResponses().filter(r => r.surveyId === id);
 
-function showAdminSurveysTable() {
-  document.getElementById('admin-results-panel').classList.add('hidden');
-  document.getElementById('admin-survey-editor-panel').classList.add('hidden');
-  document.getElementById('admin-surveys-list-panel').classList.remove('hidden');
-  renderAdminDashboard();
-}
+  document.getElementById('results-survey-title').textContent = activeSurvey.title;
+  document.getElementById('results-survey-desc').textContent = activeSurvey.description || '';
+  document.getElementById('results-survey-status').textContent = activeSurvey.status;
+  document.getElementById('results-response-count').textContent = `${responses.length} Total Responses`;
 
-
-/* ==============================================================================
-   RESULTS & ANALYTICS DASHBOARD ENGINE
-   ============================================================================== */
-
-let activeResultSurvey = null;
-let activeSurveyResponses = [];
-
-/**
- * View detailed results & analytics for a specific survey
- */
-function viewSurveyResults(surveyId) {
-  const surveys = getSurveys();
-  const responses = getResponses();
-
-  const survey = surveys.find(s => s.id === surveyId);
-  if (!survey) return;
-
-  activeResultSurvey = survey;
-  activeSurveyResponses = responses.filter(r => r.surveyId === surveyId);
-
-  // Set Header Information
-  document.getElementById('results-survey-title').textContent = survey.title;
-  document.getElementById('results-survey-desc').textContent = survey.description || 'No description provided.';
-  document.getElementById('results-survey-status').textContent = survey.status;
-  document.getElementById('results-response-count').textContent = `${activeSurveyResponses.length} Total Responses`;
-
-  // Render Per-Question Analytical Cards
-  renderQuestionAnalytics(survey, activeSurveyResponses);
-
-  // Render Raw Responses Log
-  renderRawResponsesTable(survey, activeSurveyResponses);
-
-  // Switch View
-  document.getElementById('admin-surveys-list-panel').classList.add('hidden');
-  document.getElementById('admin-survey-editor-panel').classList.add('hidden');
-  document.getElementById('admin-results-panel').classList.remove('hidden');
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-/**
- * Calculate statistics and generate visual analytics (percentage bars, rating averages)
- */
-function renderQuestionAnalytics(survey, surveyResponses) {
   const container = document.getElementById('results-questions-container');
-  if (!container) return;
-
-  const totalResponses = surveyResponses.length;
-
-  if (totalResponses === 0) {
-    container.innerHTML = `
-      <div class="card text-center" style="padding: 3rem;">
-        <h3>No Responses Collected Yet</h3>
-        <p class="text-muted" style="margin-top: 0.5rem;">
-          Publish this survey and submit a response through the student homepage to see analytics here.
-        </p>
-      </div>
-    `;
-    return;
-  }
-
-  let html = '';
-
-  survey.questions.forEach((q, index) => {
-    html += `
-      <div class="result-card">
-        <h4 class="result-question-prompt">
-          Q${index + 1}: ${escapeHTML(q.text)}
-          <span style="font-weight: 400; font-size: 0.85rem; color: var(--text-muted);">(${formatQuestionType(q.type)})</span>
-        </h4>
-    `;
-
-    // 1. Multiple Choice / Checkbox / Yes-No Analytics
-    if (q.type === 'multiple_choice' || q.type === 'yes_no' || q.type === 'checkbox') {
-      const options = (q.type === 'yes_no') ? ['Yes', 'No'] : (q.options || []);
-      const counts = {};
-      options.forEach(opt => counts[opt] = 0);
-
-      let answeredCount = 0;
-
-      surveyResponses.forEach(r => {
-        const ans = r.answers[q.id];
-        if (ans !== undefined && ans !== null && ans !== '') {
-          answeredCount++;
-          if (Array.isArray(ans)) {
-            ans.forEach(val => {
-              if (counts[val] !== undefined) counts[val]++;
-            });
-          } else {
-            if (counts[ans] !== undefined) counts[ans]++;
-          }
-        }
-      });
-
-      html += `<div class="stat-bars-list">`;
-      options.forEach(opt => {
-        const count = counts[opt] || 0;
-        const percentage = answeredCount > 0 ? ((count / answeredCount) * 100).toFixed(1) : 0;
-
-        html += `
-          <div class="stat-bar-item">
-            <div class="stat-bar-labels">
-              <span>${escapeHTML(opt)}</span>
-              <span>${count} votes (${percentage}%)</span>
-            </div>
-            <div class="stat-bar-track">
-              <div class="stat-bar-fill" style="width: ${percentage}%;"></div>
-            </div>
-          </div>
-        `;
-      });
-      html += `</div>`;
-
-    // 2. Rating (1 to 5) Analytics
-    } else if (q.type === 'rating') {
-      let sum = 0;
-      let count = 0;
-      const ratingCounts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
-
-      surveyResponses.forEach(r => {
-        const val = Number(r.answers[q.id]);
-        if (!isNaN(val) && val >= 1 && val <= 5) {
-          sum += val;
-          count++;
-          ratingCounts[val]++;
-        }
-      });
-
-      const avg = count > 0 ? (sum / count).toFixed(1) : "0.0";
-
-      html += `
-        <div class="rating-metric-display">
-          <div class="rating-score-box">
-            <div class="rating-score-big">${avg}</div>
-            <div class="text-muted" style="font-size: 0.85rem;">out of 5.0</div>
-            <div class="rating-stars">${'★'.repeat(Math.round(avg))}${'☆'.repeat(5 - Math.round(avg))}</div>
-          </div>
-          <div class="stat-bars-list" style="flex: 1; width: 100%;">
-            ${[5, 4, 3, 2, 1].map(star => {
-              const starCount = ratingCounts[star];
-              const starPct = count > 0 ? ((starCount / count) * 100).toFixed(1) : 0;
+  if (!responses.length) {
+    container.innerHTML = '<div class="card text-center"><p class="text-muted">No responses submitted yet.</p></div>';
+  } else {
+    container.innerHTML = activeSurvey.questions.map((q, idx) => {
+      let statsHTML = '';
+      if (q.type === 'multiple_choice' || q.type === 'yes_no' || q.type === 'checkbox') {
+        const opts = (q.type === 'yes_no') ? ['Yes', 'No'] : (q.options || []);
+        const counts = {};
+        opts.forEach(o => counts[o] = 0);
+        let totalVotes = 0;
+        responses.forEach(r => {
+          const ans = r.answers[q.id];
+          if (Array.isArray(ans)) { ans.forEach(a => { if (counts[a] !== undefined) { counts[a]++; totalVotes++; } }); }
+          else if (counts[ans] !== undefined) { counts[ans]++; totalVotes++; }
+        });
+        statsHTML = `<div class="stat-bars-list">${opts.map(o => {
+          const pct = totalVotes ? ((counts[o] / totalVotes) * 100).toFixed(1) : 0;
+          return `
+            <div class="stat-bar-item">
+              <div class="stat-bar-labels"><span>${escapeHTML(o)}</span><span>${counts[o]} votes (${pct}%)</span></div>
+              <div class="stat-bar-track"><div class="stat-bar-fill" style="width:${pct}%"></div></div>
+            </div>`;
+        }).join('')}</div>`;
+      } else if (q.type === 'rating') {
+        const ratings = responses.map(r => Number(r.answers[q.id])).filter(v => v >= 1 && v <= 5);
+        const avg = ratings.length ? (ratings.reduce((a, b) => a + b, 0) / ratings.length).toFixed(1) : "0.0";
+        statsHTML = `
+          <div class="rating-metric-display">
+            <div class="rating-score-box"><div class="rating-score-big">${avg}</div><small>/ 5.0</small></div>
+            <div class="stat-bars-list" style="flex:1;">${[5, 4, 3, 2, 1].map(star => {
+              const count = ratings.filter(v => v === star).length;
+              const pct = ratings.length ? ((count / ratings.length) * 100).toFixed(1) : 0;
               return `
                 <div class="stat-bar-item">
-                  <div class="stat-bar-labels">
-                    <span>${star} Star${star > 1 ? 's' : ''}</span>
-                    <span>${starCount} (${starPct}%)</span>
-                  </div>
-                  <div class="stat-bar-track">
-                    <div class="stat-bar-fill" style="width: ${starPct}%;"></div>
-                  </div>
-                </div>
-              `;
-            }).join('')}
-          </div>
-        </div>
-      `;
-
-    // 3. Short & Long Text Answers
-    } else if (q.type === 'short_text' || q.type === 'long_text') {
-      const textResponses = surveyResponses
-        .map(r => ({ text: r.answers[q.id], date: r.submittedAt }))
-        .filter(item => item.text && item.text.trim() !== '');
-
-      if (textResponses.length === 0) {
-        html += `<p class="text-muted">No written responses provided yet.</p>`;
+                  <div class="stat-bar-labels"><span>${star} Star</span><span>${count} (${pct}%)</span></div>
+                  <div class="stat-bar-track"><div class="stat-bar-fill" style="width:${pct}%"></div></div>
+                </div>`;
+            }).join('')}</div>
+          </div>`;
       } else {
-        html += `<div class="text-answers-list">`;
-        textResponses.forEach(item => {
-          html += `
-            <div class="text-answer-item">
-              "${escapeHTML(item.text)}"
-              <span class="text-answer-date">Submitted: ${item.date}</span>
-            </div>
-          `;
-        });
-        html += `</div>`;
+        const texts = responses.map(r => r.answers[q.id]).filter(t => t && String(t).trim());
+        statsHTML = texts.length ? `<div class="text-answers-list">${texts.map(t => `<div class="text-answer-item">"${escapeHTML(t)}"</div>`).join('')}</div>` : '<p class="text-muted">No text responses.</p>';
       }
-    }
 
-    html += `</div>`; // Close result-card
-  });
-
-  container.innerHTML = html;
-}
-
-/**
- * Render raw submissions table
- */
-function renderRawResponsesTable(survey, surveyResponses) {
-  const tableBody = document.getElementById('raw-responses-table-body');
-  if (!tableBody) return;
-
-  if (surveyResponses.length === 0) {
-    tableBody.innerHTML = `
-      <tr>
-        <td colspan="4" class="text-center text-muted" style="padding: 1.5rem;">
-          No submissions recorded yet.
-        </td>
-      </tr>
-    `;
-    return;
-  }
-
-  let html = '';
-  surveyResponses.forEach((r, idx) => {
-    const answersSummary = Object.keys(r.answers).map(qId => {
-      const q = survey.questions.find(item => item.id === qId);
-      const qPrompt = q ? q.text : qId;
-      const val = Array.isArray(r.answers[qId]) ? r.answers[qId].join(', ') : r.answers[qId];
-      return `<div><strong>${escapeHTML(qPrompt)}:</strong> ${escapeHTML(String(val))}</div>`;
+      return `<div class="result-card"><h4 class="result-question-prompt">Q${idx+1}: ${escapeHTML(q.text)}</h4>${statsHTML}</div>`;
     }).join('');
-
-    html += `
-      <tr>
-        <td>${idx + 1}</td>
-        <td><code>${r.responseId}</code></td>
-        <td style="font-size: 0.85rem; color: var(--text-muted);">${r.submittedAt}</td>
-        <td style="font-size: 0.85rem;">${answersSummary}</td>
-      </tr>
-    `;
-  });
-
-  tableBody.innerHTML = html;
-}
-
-/**
- * Format question type code into human-friendly label
- */
-function formatQuestionType(type) {
-  const map = {
-    'short_text': 'Short Text',
-    'long_text': 'Long Text',
-    'multiple_choice': 'Multiple Choice',
-    'checkbox': 'Checkboxes',
-    'yes_no': 'Yes / No',
-    'rating': '1 to 5 Rating'
-  };
-  return map[type] || type;
-}
-
-/**
- * Export Survey Results as a downloadable CSV file (Pure JavaScript)
- */
-function exportActiveSurveyCSV() {
-  if (!activeResultSurvey || activeSurveyResponses.length === 0) {
-    alert("No response data available to export.");
-    return;
   }
 
-  // 1. Build CSV Header Row
-  const headers = ['Response ID', 'Submitted Timestamp'];
-  activeResultSurvey.questions.forEach(q => {
-    headers.push(q.text.replace(/"/g, '""')); // Escape quotes for CSV
-  });
+  // Raw Submissions Table
+  const tbody = document.getElementById('raw-responses-table-body');
+  tbody.innerHTML = responses.map((r, i) => `
+    <tr>
+      <td>${i + 1}</td>
+      <td><code>${r.responseId}</code></td>
+      <td>${r.submittedAt}</td>
+      <td>${Object.entries(r.answers).map(([qid, val]) => {
+        const qText = activeSurvey.questions.find(x => x.id === qid)?.text || qid;
+        return `<div><strong>${escapeHTML(qText)}:</strong> ${escapeHTML(Array.isArray(val) ? val.join(', ') : val)}</div>`;
+      }).join('')}</td>
+    </tr>
+  `).join('') || '<tr><td colspan="4" class="text-center text-muted">No submissions recorded.</td></tr>';
 
-  const csvRows = [];
-  csvRows.push(headers.map(h => `"${h}"`).join(','));
-
-  // 2. Build Data Rows
-  activeSurveyResponses.forEach(r => {
-    const row = [
-      `"${r.responseId}"`,
-      `"${r.submittedAt}"`
-    ];
-
-    activeResultSurvey.questions.forEach(q => {
-      let val = r.answers[q.id];
-      if (val === undefined || val === null) {
-        val = '';
-      } else if (Array.isArray(val)) {
-        val = val.join('; ');
-      }
-      row.push(`"${String(val).replace(/"/g, '""')}"`);
-    });
-
-    csvRows.push(row.join(','));
-  });
-
-  const csvString = csvRows.join('\r\n');
-
-  // 3. Trigger browser download using Blob
-  const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
-  const downloadUrl = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = downloadUrl;
-  const sanitizedTitle = activeResultSurvey.title.toLowerCase().replace(/[^a-z0-9]/g, '_');
-  a.download = `survey_${sanitizedTitle}_results.csv`;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(downloadUrl);
+  showAdminSection('admin-results-panel');
 }
 
+// 7. CSV EXPORT (Browser Blob API)
+function exportCSV() {
+  if (!activeSurvey) return;
+  const responses = getResponses().filter(r => r.surveyId === activeSurvey.id);
+  if (!responses.length) return alert("No responses to export.");
 
-/* ==============================================================================
-   APPLICATION BOOTSTRAPPER (Runs when DOM Content is Ready)
-   ============================================================================== */
+  const headers = ['Response ID', 'Timestamp', ...activeSurvey.questions.map(q => `"${q.text.replace(/"/g, '""')}"`)];
+  const rows = responses.map(r => [
+    `"${r.responseId}"`,
+    `"${r.submittedAt}"`,
+    ...activeSurvey.questions.map(q => {
+      const v = r.answers[q.id];
+      return `"${(Array.isArray(v) ? v.join('; ') : (v ?? '')).toString().replace(/"/g, '""')}"`;
+    })
+  ]);
+
+  const csv = [headers.join(','), ...rows.map(row => row.join(','))].join('\r\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = `results_${activeSurvey.id}.csv`;
+  link.click();
+}
+
+// 8. BOOTSTRAPPER
 document.addEventListener('DOMContentLoaded', () => {
-  // Check which page is currently loaded and initialize appropriate module
-  if (document.getElementById('surveys-grid')) {
-    initPublicPortal();
-  }
-
-  if (document.getElementById('admin-login-form')) {
-    initAdminPortal();
-  }
+  if (document.getElementById('surveys-grid')) initPublic();
+  if (document.getElementById('admin-login-form')) initAdmin();
 });
