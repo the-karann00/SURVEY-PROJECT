@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simple Online Survey Creator | Student Portal</title>
+  <link rel="stylesheet" href="survey.css">
+</head>
+<body>
+
+  <!-- Top Navigation Bar -->
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="nav-brand">
+        <span class="brand-icon">📝</span>
+        <span class="brand-text">SurveyMaster</span>
+      </a>
+      <nav class="nav-links">
+        <a href="survey.html" class="nav-link active">Home</a>
+        <a href="#surveys-section" class="nav-link">Available Surveys</a>
+        <a href="admin.html" class="btn btn-outline-nav">Admin Portal</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="container hero-content">
+      <span class="hero-badge">🎓 College Project • BTech CSE</span>
+      <h1 class="hero-title">Simple Online Survey Creator</h1>
+      <p class="hero-subtitle">
+        A clean, lightweight web application for creating surveys, collecting student responses, 
+        preventing duplicate entries, and viewing real-time analytical dashboards.
+      </p>
+      <div class="hero-actions">
+        <a href="#surveys-section" class="btn btn-primary btn-large">Browse Surveys</a>
+        <a href="admin.html" class="btn btn-secondary btn-large">Admin Login</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Key Statistics Banner -->
+  <section class="stats-banner">
+    <div class="container stats-grid">
+      <div class="stat-item">
+        <span class="stat-number" id="public-stat-surveys">0</span>
+        <span class="stat-label">Active Surveys</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-number" id="public-stat-responses">0</span>
+        <span class="stat-label">Responses Collected</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-number">100%</span>
+        <span class="stat-label">Client-Side Persistence</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Content Container -->
+  <main class="container main-content">
+
+    <!-- VIEW 1: Available Surveys Grid -->
+    <section id="surveys-view">
+      <div class="section-header" id="surveys-section">
+        <div>
+          <h2 class="section-title">Available Surveys</h2>
+          <p class="section-subtitle">Select any published survey below to submit your feedback.</p>
+        </div>
+      </div>
+
+      <!-- Survey Cards Grid (Populated dynamically by script.js) -->
+      <div class="cards-grid" id="surveys-grid">
+        <!-- Dynamic survey cards injected here -->
+      </div>
+    </section>
+
+    <!-- VIEW 2: Survey Taking Form (Initially Hidden) -->
+    <section id="survey-taker-view" class="hidden">
+      <div class="survey-header-card">
+        <button type="button" class="btn btn-outline btn-sm" id="btn-back-to-surveys">
+          ← Back to All Surveys
+        </button>
+        <div class="survey-info">
+          <span class="badge badge-published" id="taker-survey-status">Published</span>
+          <h2 class="survey-title" id="taker-survey-title">Survey Title</h2>
+          <p class="survey-desc" id="taker-survey-desc">Survey description goes here.</p>
+          <p class="form-helper-text"><span class="required-star">*</span> Indicates a required question</p>
+        </div>
+      </div>
+
+      <!-- Error Notification Box -->
+      <div id="survey-validation-error" class="alert alert-danger hidden">
+        <strong>Please check the form:</strong> One or more required questions have not been answered.
+      </div>
+
+      <!-- Survey Taking Form -->
+      <form id="survey-taking-form" novalidate>
+        <div id="survey-questions-container" class="questions-list">
+          <!-- Dynamic questions injected here by script.js -->
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn btn-outline" id="btn-cancel-survey">Cancel</button>
+          <button type="submit" class="btn btn-primary btn-large">Submit Survey Response</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- VIEW 3: Submission Success View (Initially Hidden) -->
+    <section id="survey-success-view" class="hidden">
+      <div class="feedback-card text-center">
+        <div class="success-icon-wrapper">
+          <span class="feedback-icon">✅</span>
+        </div>
+        <h2 class="feedback-title">Thank You! Your Response is Recorded</h2>
+        <p class="feedback-message">
+          Your feedback has been successfully stored in browser storage.
+        </p>
+        <div class="submission-meta-card">
+          <p><strong>Survey:</strong> <span id="success-survey-name">-</span></p>
+          <p><strong>Submission ID:</strong> <span id="success-response-id">-</span></p>
+          <p><strong>Recorded At:</strong> <span id="success-response-time">-</span></p>
+        </div>
+        <div class="feedback-actions">
+          <button type="button" class="btn btn-primary" id="btn-success-home">Take Another Survey</button>
+          <a href="admin.html" class="btn btn-secondary">View Admin Results</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 4: Duplicate Submission Blocked View (Initially Hidden) -->
+    <section id="survey-already-submitted-view" class="hidden">
+      <div class="feedback-card text-center warning-card">
+        <div class="warning-icon-wrapper">
+          <span class="feedback-icon">⚠️</span>
+        </div>
+        <h2 class="feedback-title">Submission Already Recorded</h2>
+        <p class="feedback-message">
+          You have already completed this survey from this browser. To prevent duplicate submissions, 
+          each browser is restricted to one response per survey.
+        </p>
+        <div class="demo-note-box">
+          <small>
+            💡 <strong>Academic Project Note:</strong> In this demo application, duplicate prevention is tracked 
+            using <code>localStorage</code>. Clearing your browser storage or using an Incognito window 
+            resets this restriction for demonstration purposes.
+          </small>
+        </div>
+        <div class="feedback-actions">
+          <button type="button" class="btn btn-primary" id="btn-already-back">Back to Available Surveys</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="app-footer">
+    <div class="container footer-content">
+      <p><strong>Simple Online Survey Creator</strong>- KARAN KUMAR GUPTA, VAIBHAV KUMAR</p>
+      <p class="footer-subtext">Built with pure HTML, CSS, and Vanilla JavaScript (No external frameworks or libraries).</p>
+    </div>
+  </footer>
+
+  <!-- Main JavaScript File -->
+  <script src="survey.js"></script>
+</body>
+</html>

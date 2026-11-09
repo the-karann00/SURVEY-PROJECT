@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard | Simple Online Survey Creator</title>
+  <link rel="stylesheet" href="survey.css">
+</head>
+<body class="admin-body">
+
+  <!-- Top Navigation Bar -->
+  <header class="navbar admin-navbar">
+    <div class="nav-container">
+      <a href="admin.html" class="nav-brand">
+        <span class="brand-icon">⚙️</span>
+        <span class="brand-text">SurveyMaster Admin</span>
+      </a>
+      <nav class="nav-links">
+        <a href="index.html" class="nav-link">🌐 Public Site</a>
+        <div id="admin-user-pill" class="user-pill hidden">
+          <span class="user-tag">👤 Administrator</span>
+          <button type="button" class="btn btn-outline btn-xs" id="btn-admin-logout">Logout</button>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container admin-main">
+
+    <!-- 1. ADMIN LOGIN PANEL (Visible when not authenticated) -->
+    <section id="admin-login-view" class="auth-section">
+      <div class="auth-card">
+        <div class="auth-header text-center">
+          <span class="auth-icon">🔐</span>
+          <h2>Administrator Login</h2>
+          <p class="auth-subtitle">Enter your credentials to access the survey management dashboard.</p>
+        </div>
+
+        <div id="login-error-alert" class="alert alert-danger hidden">
+          Invalid username or password! Please check the demo credentials.
+        </div>
+
+        <form id="admin-login-form">
+          <div class="form-group">
+            <label for="admin-username" class="form-label">Username</label>
+            <input type="text" id="admin-username" class="form-control" placeholder="Enter username (e.g. admin)" required autocomplete="off">
+          </div>
+
+          <div class="form-group">
+            <label for="admin-password" class="form-label">Password</label>
+            <input type="password" id="admin-password" class="form-control" placeholder="Enter password (e.g. admin123)" required>
+          </div>
+
+          <div class="demo-credentials-banner">
+            <p><strong>Demo Credentials:</strong></p>
+            <p>Username: <code>admin</code> | Password: <code>admin123</code></p>
+            <small class="text-muted">Note: Plain client-side demo authentication for academic demonstration.</small>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-block btn-large">Login to Dashboard</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- 2. ADMIN DASHBOARD (Visible when authenticated) -->
+    <section id="admin-dashboard-view" class="hidden">
+
+      <!-- Sub-view 2A: Survey Management Table & Analytics Overview -->
+      <div id="admin-surveys-list-panel">
+        
+        <!-- Dashboard Top Header & Actions -->
+        <div class="dashboard-header-row">
+          <div>
+            <h1 class="page-title">Survey Management Dashboard</h1>
+            <p class="page-subtitle">Create, publish, monitor, and analyze all campus surveys.</p>
+          </div>
+          <div class="dashboard-actions">
+            <button type="button" class="btn btn-outline" id="btn-reset-demo-data" title="Restore sample surveys A, B, and C">
+              🔄 Reset Sample Surveys
+            </button>
+            <button type="button" class="btn btn-primary" id="btn-open-create-survey">
+              ➕ Create New Survey
+            </button>
+          </div>
+        </div>
+
+        <!-- Metrics KPI Cards -->
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <div class="metric-icon bg-indigo">📋</div>
+            <div class="metric-details">
+              <span class="metric-value" id="kpi-total-surveys">0</span>
+              <span class="metric-label">Total Surveys</span>
+            </div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-icon bg-emerald">🚀</div>
+            <div class="metric-details">
+              <span class="metric-value" id="kpi-published-surveys">0</span>
+              <span class="metric-label">Published (Active)</span>
+            </div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-icon bg-sky">📊</div>
+            <div class="metric-details">
+              <span class="metric-value" id="kpi-total-responses">0</span>
+              <span class="metric-label">Total Responses</span>
+            </div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-icon bg-amber">⏸️</div>
+            <div class="metric-details">
+              <span class="metric-value" id="kpi-draft-surveys">0</span>
+              <span class="metric-label">Draft / Closed</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Surveys Data Table Card -->
+        <div class="card data-table-card">
+          <div class="card-header-flex">
+            <h3 class="card-title">All Surveys</h3>
+            <span class="card-badge" id="table-surveys-count">0 Surveys Registered</span>
+          </div>
+
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Survey Title</th>
+                  <th>Questions</th>
+                  <th>Status</th>
+                  <th>Responses</th>
+                  <th>Created Date</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="admin-surveys-table-body">
+                <!-- Dynamically populated rows -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Sub-view 2B: Survey Editor (Create / Edit) -->
+      <div id="admin-survey-editor-panel" class="hidden">
+        <div class="editor-header">
+          <button type="button" class="btn btn-outline btn-sm" id="btn-cancel-editor">
+            ← Back to Dashboard
+          </button>
+          <h2 class="editor-title" id="editor-heading">Create New Survey</h2>
+          <p class="editor-subtitle">Define survey details, question types, and answer choices below.</p>
+        </div>
+
+        <!-- Editor Form -->
+        <form id="survey-editor-form" novalidate>
+          <div class="card editor-meta-card">
+            <div class="form-group">
+              <label for="edit-survey-title" class="form-label">Survey Title <span class="required-star">*</span></label>
+              <input type="text" id="edit-survey-title" class="form-control" placeholder="e.g. Student Feedback About Teaching" required>
+            </div>
+
+            <div class="form-group">
+              <label for="edit-survey-desc" class="form-label">Survey Description</label>
+              <textarea id="edit-survey-desc" class="form-control" rows="2" placeholder="Briefly explain the purpose of this survey..."></textarea>
+            </div>
+
+            <div class="form-group-inline">
+              <label for="edit-survey-status" class="form-label">Publishing Status:</label>
+              <select id="edit-survey-status" class="form-control status-select">
+                <option value="Draft">Draft (Hidden from users)</option>
+                <option value="Published" selected>Published (Accepting responses)</option>
+                <option value="Closed">Closed (Submissions locked)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Question Builder Container -->
+          <div class="questions-builder-header">
+            <h3>Survey Questions</h3>
+            <button type="button" class="btn btn-secondary btn-sm" id="btn-add-question">
+              ➕ Add Question
+            </button>
+          </div>
+
+          <div id="builder-questions-list" class="builder-questions-list">
+            <!-- Dynamic question editor cards injected here -->
+          </div>
+
+          <div id="editor-validation-error" class="alert alert-danger hidden">
+            <!-- Validation errors displayed here -->
+          </div>
+
+          <div class="editor-actions">
+            <button type="button" class="btn btn-outline" id="btn-discard-survey">Cancel</button>
+            <button type="submit" class="btn btn-primary btn-large" id="btn-save-survey">Save Survey</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Sub-view 2C: Results & Analytics Dashboard -->
+      <div id="admin-results-panel" class="hidden">
+        <div class="results-header-card">
+          <div class="results-header-left">
+            <button type="button" class="btn btn-outline btn-sm" id="btn-back-from-results">
+              ← Back to Survey List
+            </button>
+            <h2 class="results-survey-title" id="results-survey-title">Survey Results</h2>
+            <p class="results-survey-desc" id="results-survey-desc"></p>
+            <div class="results-meta-tags">
+              <span class="badge" id="results-survey-status">Published</span>
+              <span class="badge badge-info" id="results-response-count">0 Responses</span>
+            </div>
+          </div>
+          <div class="results-header-actions">
+            <button type="button" class="btn btn-success" id="btn-export-csv">
+              📥 Export CSV File
+            </button>
+          </div>
+        </div>
+
+        <!-- Question Analytics Grid -->
+        <div id="results-questions-container" class="results-questions-grid">
+          <!-- Dynamic analytical question cards injected here -->
+        </div>
+
+        <!-- Raw Responses Table Section -->
+        <div class="card raw-responses-card">
+          <h3 class="card-title">Submission Log (Individual Responses)</h3>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Response ID</th>
+                  <th>Submission Timestamp</th>
+                  <th>Recorded Answers</th>
+                </tr>
+              </thead>
+              <tbody id="raw-responses-table-body">
+                <!-- Dynamically populated response rows -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="app-footer admin-footer">
+    <div class="container footer-content">
+      <p><strong>Simple Online Survey Creator</strong> — Administrator Management Console</p>
+      <p class="footer-subtext">Client-side persistence powered by HTML5 LocalStorage API.</p>
+    </div>
+  </footer>
+
+  <!-- Main JavaScript File -->
+  <script src="survey.js"></script>
+</body>
+</html>
