@@ -51,7 +51,7 @@
 
 body {
   font-family: var(--font-family);
-  background-color: var(--bg-body);
+  background: linear-gradient(135deg, #18172f 0%, #58c6a9 50%, #18172f 100%);;
   color: var(--text-main);
   line-height: 1.6;
   min-height: 100vh;
@@ -156,7 +156,7 @@ body {
 
 /* --- Hero Section --- */
 .hero-section {
-  background: linear-gradient(135deg, #312e81 0%, #4338ca 50%, #4f46e5 100%);
+  background: linear-gradient(135deg, #18172f 0%, #58c6a9 50%, #18172f 100%);
   color: #ffffff;
   padding: 3.5rem 0 3rem;
   text-align: center;
@@ -223,7 +223,7 @@ body {
 .stat-number {
   font-size: 1.85rem;
   font-weight: 800;
-  color: var(--primary);
+  color: #58c6a9;
   line-height: 1.2;
 }
 
@@ -253,24 +253,26 @@ body {
 }
 
 .btn-primary {
-  background-color: var(--primary);
+  background-color: #447e8b;
   color: #ffffff;
 }
 
 .btn-primary:hover {
-  background-color: var(--primary-hover);
+  background-color: #58c6a9;
+  color: white;
   box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
 }
 
+
 .btn-secondary {
-  background-color: #ffffff;
-  color: var(--primary);
+  background-color: #447e8b;
+  color: #ffffff;
   border-color: #ffffff;
 }
 
 .btn-secondary:hover {
-  background-color: #f8fafc;
-  color: var(--primary-hover);
+  background-color: #58c6a9;
+  color: white;
 }
 
 .btn-success {
@@ -396,7 +398,7 @@ body {
 }
 
 .section-subtitle {
-  color: var(--text-muted);
+  color: black;
   font-size: 1rem;
   margin-top: 0.25rem;
 }
@@ -425,7 +427,7 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  border-top: 4px solid var(--primary);
+  border-top: 4px solid #18172fad ;
 }
 
 .survey-card-header {
